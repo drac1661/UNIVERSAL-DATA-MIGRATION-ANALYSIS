@@ -1,9 +1,9 @@
 """Universal table extractor using SQLAlchemy for multiple database types."""
 
 from typing import List, Dict, Any, Optional
-from sqlalchemy import create_engine, inspect
-from sqlalchemy.engine import Inspector
-from migrator import load_db_config
+from sqlalchemy import inspect
+from sqlalchemy.engine import Inspector,create_engine
+from migrator import load_db_config, connection_manager
 
 
 class AllTableExtractor:
@@ -17,7 +17,11 @@ class AllTableExtractor:
         """
         self.config = load_db_config(config_file)
         self.db_type = self.config.get("db_type", "postgres").lower()
-        self.engine = self._create_engine_from_config()
+
+        # configure the global connection manager to use this config file
+        connection_manager.configure(config_file)
+        # reuse engine from connection manager
+        self.engine = connection_manager.get_engine()
         self.inspector = inspect(self.engine)
     
     def _create_engine_from_config(self):

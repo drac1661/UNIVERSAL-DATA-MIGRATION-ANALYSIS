@@ -1,27 +1,28 @@
-import pandas as pd 
-from sqlalchemy import create_engine, inspect
-from migrator import get_db_connection, get_db_connection_direct
+import pandas as pd
+from migrator import connection_manager
 
 
 class PostgresExtractor:
-    """Extract data from PostgreSQL database."""
-    
+    """Extract data from PostgreSQL database using the central ConnectionManager."""
+
     def __init__(self):
-        """Initialize the PostgreSQL extractor."""
         self.conn = None
-    
+
     def connect(self):
-        """Open a direct connection (caller responsible for closing)."""
-        self.conn = get_db_connection_direct()
-    
+        """Open a raw DB-API connection from the central connection manager."""
+        # Returns a DB-API connection (psycopg2 connection for Postgres)
+        self.conn = connection_manager.get_raw_dbapi_connection()
+
     def disconnect(self):
-        """Close the direct connection."""
+        """Close the raw DB-API connection."""
         if self.conn:
-            self.conn.close()
-            self.conn = None
-    
+            try:
+                self.conn.close()
+            finally:
+                self.conn = None
+
     def get_cursor(self):
-        """Get a cursor from the connection."""
+        """Get a cursor from the raw DB-API connection."""
         if not self.conn:
             raise RuntimeError("Connection not established. Call connect() first.")
         return self.conn.cursor()
