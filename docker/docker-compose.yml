@@ -1,18 +1,19 @@
-version: '3.9'
+version: "3.9"
 
 services:
   db:
-    image: postgres
+    image: postgres:latest
     container_name: my-postgres
     restart: always
     environment:
       POSTGRES_USER: drac1661
       POSTGRES_PASSWORD: Drac1661@
       POSTGRES_DB: udm_dev
+      POSTGRES_INITDB_ARGS: "--data-checksums --timezone=Asia/Kolkata"
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql  
 
 volumes:
   pgdata:

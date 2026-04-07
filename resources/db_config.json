@@ -1,0 +1,9 @@
+{
+  "db_type": "postgres",
+  "host": "127.0.0.1",
+  "port": 5432,
+  "dbname": "udm_dev",
+  "user": "drac1661",
+  "password": "Drac1661@",
+  "sslmode": "disable"
+}
