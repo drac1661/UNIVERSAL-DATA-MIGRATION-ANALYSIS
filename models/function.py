@@ -1,10 +1,10 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Function(BaseModel):
     name: str
-    schema: Optional[str] = None
+    schema_name: Optional[str] = Field(None, alias="schema")
     language: Optional[str] = None
     return_type: Optional[str] = None
     argument_types: List[str] = []

@@ -1,10 +1,10 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class View(BaseModel):
     name: str
-    schema: Optional[str] = None
+    schema_name: Optional[str] = Field(None, alias="schema")
     definition: Optional[str] = None
     columns: List[str] = []
     is_materialized: bool = False

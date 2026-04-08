@@ -1,9 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TableStats(BaseModel):
-    schema: Optional[str] = None
+    schema_name: Optional[str] = Field(None, alias="schema")
     table: Optional[str] = None
     rows: Optional[int] = None
     total_size_bytes: Optional[int] = None

@@ -1,10 +1,10 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Trigger(BaseModel):
     name: str
-    schema: Optional[str] = None
+    schema_name: Optional[str] = Field(None, alias="schema")
     event_manipulation: List[str] = []  # INSERT, UPDATE, DELETE, TRUNCATE
     event_timing: Optional[str] = None  # BEFORE, AFTER, INSTEAD OF
     action_orientation: Optional[str] = None  # ROW, STATEMENT

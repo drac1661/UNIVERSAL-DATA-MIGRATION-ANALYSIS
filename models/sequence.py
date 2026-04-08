@@ -1,10 +1,10 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Sequence(BaseModel):
     name: str
-    schema: Optional[str] = None
+    schema_name: Optional[str] = Field(None, alias="schema")
     start_value: Optional[int] = None
     increment: Optional[int] = None
     min_value: Optional[int] = None

@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from .column import Column
 from .foreignkey import ForeignKey
 from .index import Index
@@ -8,7 +8,7 @@ from .constraint import Constraint
 
 class Table(BaseModel):
     table_name: str
-    schema: Optional[str] = None
+    schema_name: Optional[str] = Field(None, alias="schema")
     owner: Optional[str] = None
     columns: List[Column] = []
     primary_keys: List[str] = []
