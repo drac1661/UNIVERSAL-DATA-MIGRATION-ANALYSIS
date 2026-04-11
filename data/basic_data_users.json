@@ -1,0 +1,24 @@
+{
+  "table_name": "users",
+  "row_count": 3,
+  "rows": [
+    {
+      "id": 1,
+      "name": "Alice Johnson",
+      "email": "alice1@example.com",
+      "created_at": "2026-04-07 17:27:48.466484+05:30"
+    },
+    {
+      "id": 2,
+      "name": "Bob Smith",
+      "email": "bob1@example.com",
+      "created_at": "2026-04-07 17:27:48.466484+05:30"
+    },
+    {
+      "id": 3,
+      "name": "Carol Lee",
+      "email": "carol1@example.com",
+      "created_at": "2026-04-07 17:27:48.466484+05:30"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 from typing import List
 
@@ -15,6 +16,8 @@ from models import (
     Constraint,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def extract_schema_to_models(config_file: str = "db_config.json", output_file: str = "schema/extracted_schema.json") -> None:
     """Extract database metadata via `AllTableExtractor` and save as Pydantic models (JSON).
@@ -23,7 +26,12 @@ def extract_schema_to_models(config_file: str = "db_config.json", output_file: s
     `Index`, and `Constraint` models with information available from the
     SQLAlchemy inspector and lightweight metadata queries.
     """
-    extractor = allTableExtractor.AllTableExtractor(config_file)
+    logger.info(f"Starting schema extraction from {config_file} to {output_file}")
+    try:
+        extractor = allTableExtractor.AllTableExtractor(config_file)
+    except Exception as e:
+        logger.error(f"Failed to initialize extractor: {e}", exc_info=True)
+        raise
 
     cfg = extractor.config or {}
     db_model = Database(
@@ -32,6 +40,7 @@ def extract_schema_to_models(config_file: str = "db_config.json", output_file: s
         host=cfg.get("host"),
         port=cfg.get("port"),
     )
+    logger.debug(f"Created Database model for {db_model.dbname} ({db_model.db_type})")
 
     # Attempt to add some runtime metadata (version, roles, extensions)
     try:
@@ -39,27 +48,30 @@ def extract_schema_to_models(config_file: str = "db_config.json", output_file: s
         with db_connection() as conn:
             try:
                 db_model.version = str(conn.execute(text("select version()")).scalar())
-            except Exception:
-                pass
+                logger.debug(f"Database version: {db_model.version}\")")
+            except Exception as e:
+                logger.debug(f"Could not retrieve database version: {e}")
 
             if db_model.db_type in ("postgres", "postgresql"):
                 try:
                     rows = conn.execute(text("select extname from pg_extension")).fetchall()
                     db_model.extensions = [r[0] for r in rows]
-                except Exception:
-                    pass
+                    logger.debug(f"Found {len(db_model.extensions)} extensions")
+                except Exception as e:
+                    logger.debug(f"Could not retrieve extensions: {e}")
 
                 try:
                     rows = conn.execute(text("select rolname from pg_roles")).fetchall()
                     db_model.roles = [r[0] for r in rows]
-                except Exception:
-                    pass
-    except Exception:
-        # If the global connection wrapper isn't configured yet, ignore
-        pass
+                    logger.debug(f"Found {len(db_model.roles)} roles")
+                except Exception as e:
+                    logger.debug(f"Could not retrieve roles: {e}")
+    except Exception as e:
+        logger.warning(f"Could not retrieve runtime metadata: {e}")
 
     # Inspect schemas and tables
     user_schemas: List[str] = extractor.get_all_user_schemas()
+    logger.info(f"Processing {len(user_schemas)} schema(s)")
 
     for schema_name in user_schemas:
         schema_model = Schema(schema_name=schema_name)
@@ -188,13 +200,21 @@ def extract_schema_to_models(config_file: str = "db_config.json", output_file: s
     out_path = Path(output_file)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     try:
+        logger.info(f"Saving schema to {out_path}")
         # Pydantic v2
         json_text = db_model.model_dump_json(indent=2, ensure_ascii=False)
     except Exception:
         # Fallback for Pydantic v1
+        logger.debug("Using Pydantic v1 serialization")
         json_text = db_model.json(indent=2, ensure_ascii=False)
-    out_path.write_text(json_text)
-    print(f"Schema extracted and saved to {out_path}")
+    
+    try:
+        out_path.write_text(json_text)
+        logger.info(f"Schema extracted and saved successfully to {out_path}")
+        print(f"Schema extracted and saved to {out_path}")
+    except Exception as e:
+        logger.error(f"Failed to save schema to {out_path}: {e}", exc_info=True)
+        raise
 
 ###################################3
 #this code part is tested this is not thrwoing error

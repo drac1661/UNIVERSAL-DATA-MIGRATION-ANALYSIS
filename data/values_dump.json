@@ -1,0 +1,75 @@
+{
+  "database": {
+    "name": "udm_dev",
+    "db_type": "postgres"
+  },
+  "values": [
+    {
+      "schema_name": "basic_data",
+      "tables": [
+        {
+          "table_name": "users",
+          "row_count": 3,
+          "rows": [
+            {
+              "id": 1,
+              "name": "Alice Johnson",
+              "email": "alice1@example.com",
+              "created_at": "2026-04-07 17:27:48.466484+05:30"
+            },
+            {
+              "id": 2,
+              "name": "Bob Smith",
+              "email": "bob1@example.com",
+              "created_at": "2026-04-07 17:27:48.466484+05:30"
+            },
+            {
+              "id": 3,
+              "name": "Carol Lee",
+              "email": "carol1@example.com",
+              "created_at": "2026-04-07 17:27:48.466484+05:30"
+            }
+          ]
+        },
+        {
+          "table_name": "orders",
+          "row_count": 4,
+          "rows": [
+            {
+              "id": 1,
+              "user_id": 1,
+              "order_date": "2026-04-01 15:45:00+05:30",
+              "total_amount": "125.50",
+              "status": "pending"
+            },
+            {
+              "id": 2,
+              "user_id": 1,
+              "order_date": "2026-04-02 20:00:00+05:30",
+              "total_amount": "75.00",
+              "status": "completed"
+            },
+            {
+              "id": 3,
+              "user_id": 2,
+              "order_date": "2026-04-03 14:30:00+05:30",
+              "total_amount": "210.99",
+              "status": "shipped"
+            },
+            {
+              "id": 4,
+              "user_id": 3,
+              "order_date": "2026-04-04 22:15:00+05:30",
+              "total_amount": "55.25",
+              "status": "completed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "schema_name": "public",
+      "tables": []
+    }
+  ]
+}

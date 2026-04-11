@@ -13,6 +13,12 @@ from .role import Role
 from .permission import Permission
 from .stats import TableStats
 
+# MongoDB models
+from .mongo_field import MongoDBField
+from .mongo_index import MongoDBIndex
+from .mongo_collection import MongoDBCollection
+from .mongo_database import MongoDBDatabase
+
 __all__ = [
 	"Column",
 	"Table",
@@ -28,4 +34,9 @@ __all__ = [
 	"Role",
 	"Permission",
 	"TableStats",
+	# MongoDB models
+	"MongoDBField",
+	"MongoDBIndex",
+	"MongoDBCollection",
+	"MongoDBDatabase",
 ]

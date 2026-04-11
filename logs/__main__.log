@@ -1,0 +1,8 @@
+2026-04-11 13:45:53 - __main__ - INFO - [schema_generator_main.py:83] - Starting data extraction: schema=schema/extracted_schema.json, output=data/values_dump.json, batch_size=2, row_limit=2
+2026-04-11 13:45:54 - __main__ - INFO - [schema_generator_main.py:112] - Processing schema: basic_data
+2026-04-11 13:45:54 - __main__ - INFO - [schema_generator_main.py:112] - Processing schema: public
+2026-04-11 13:45:54 - __main__ - INFO - [schema_generator_main.py:205] - Saved combined values JSON to data\values_dump.json
+2026-04-11 13:49:16 - __main__ - INFO - [schema_generator_main.py:83] - Starting data extraction: schema=schema/extracted_schema.json, output=data/values_dump.json, batch_size=None, row_limit=None
+2026-04-11 13:49:17 - __main__ - INFO - [schema_generator_main.py:112] - Processing schema: basic_data
+2026-04-11 13:49:17 - __main__ - INFO - [schema_generator_main.py:112] - Processing schema: public
+2026-04-11 13:49:17 - __main__ - INFO - [schema_generator_main.py:205] - Saved combined values JSON to data\values_dump.json
