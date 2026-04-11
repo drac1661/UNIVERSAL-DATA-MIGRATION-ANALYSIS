@@ -1,9 +1,12 @@
 """Universal table extractor using SQLAlchemy for multiple database types."""
 
+import logging
 from typing import List, Dict, Any, Optional
 from sqlalchemy import inspect
-from sqlalchemy.engine import Inspector,create_engine
+from sqlalchemy.engine import Inspector, create_engine
 from migrator import load_db_config, connection_manager
+
+logger = logging.getLogger(__name__)
 
 
 class AllTableExtractor:
@@ -15,14 +18,21 @@ class AllTableExtractor:
         Args:
             config_file: Name of the database config file
         """
-        self.config = load_db_config(config_file)
-        self.db_type = self.config.get("db_type", "postgres").lower()
+        logger.info(f"Initializing AllTableExtractor with config: {config_file}")
+        try:
+            self.config = load_db_config(config_file)
+            self.db_type = self.config.get("db_type", "postgres").lower()
+            logger.debug(f"Database type: {self.db_type}")
 
-        # configure the global connection manager to use this config file
-        connection_manager.configure(config_file)
-        # reuse engine from connection manager
-        self.engine = connection_manager.get_engine()
-        self.inspector = inspect(self.engine)
+            # configure the global connection manager to use this config file
+            connection_manager.configure(config_file)
+            # reuse engine from connection manager
+            self.engine = connection_manager.get_engine()
+            self.inspector = inspect(self.engine)
+            logger.info("AllTableExtractor initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize AllTableExtractor: {e}", exc_info=True)
+            raise
     
     def _create_engine_from_config(self):
         """Create SQLAlchemy engine from existing config using connector modules.
@@ -146,10 +156,13 @@ class AllTableExtractor:
         
         try:
             schemas = self.inspector.get_schema_names()
-            return [s for s in schemas if s not in system_schemas]
+            user_schemas = [s for s in schemas if s not in system_schemas]
+            logger.info(f"Found {len(user_schemas)} user schemas: {user_schemas}")
+            return user_schemas
         except Exception as e: 
-            print(f"Error getting schemas: {e}")
-            return ['public']  # Fallback to public
+            logger.error(f"Error getting schemas: {e}", exc_info=True)
+            logger.warning("Falling back to 'public' schema")
+            return ['public']
     
     def get_table_columns(self, table_name: str, schema: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get column information for a specific table.
@@ -161,8 +174,13 @@ class AllTableExtractor:
         Returns:
             List of dicts with column information
         """
-        columns = self.inspector.get_columns(table_name, schema=schema)
-        return columns
+        try:
+            columns = self.inspector.get_columns(table_name, schema=schema)
+            logger.debug(f"Retrieved {len(columns)} columns for {schema}.{table_name}")
+            return columns
+        except Exception as e:
+            logger.error(f"Error getting columns for {schema}.{table_name}: {e}", exc_info=True)
+            return []
     
     def get_table_columns_info(self, table_name: str, schema: Optional[str] = None) -> Dict[str, Dict[str, Any]]:
         """Get detailed column information keyed by column name.

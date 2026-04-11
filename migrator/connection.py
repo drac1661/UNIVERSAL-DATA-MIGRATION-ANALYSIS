@@ -26,6 +26,7 @@ Usage:
 
 from __future__ import annotations
 
+import logging
 import threading
 from contextlib import contextmanager
 from typing import Any, Optional
@@ -35,6 +36,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine, Connection
 
 from .database import load_db_config
+
+logger = logging.getLogger(__name__)
 
 
 class ConnectionManager:
@@ -53,11 +56,18 @@ class ConnectionManager:
         Disposes existing engine if it was already created so the new
         configuration will be used when next requesting the engine.
         """
+        logger.info(f"Configuring connection manager with config file: {config_file}")
         self.config_file = config_file
-        self._config = load_db_config(config_file)
+        try:
+            self._config = load_db_config(config_file)
+            logger.debug(f"Loaded config for DB type: {self._config.get('db_type')}")
+        except Exception as e:
+            logger.error(f"Failed to load config from {config_file}: {e}", exc_info=True)
+            raise
         if self._engine is not None:
             try:
                 self._engine.dispose()
+                logger.debug("Disposed existing database engine")
             finally:
                 self._engine = None
 
@@ -95,8 +105,14 @@ class ConnectionManager:
 
     def get_engine(self) -> Engine:
         if self._engine is None:
-            url = self._build_url()
-            self._engine = create_engine(url, echo=self.echo, pool_pre_ping=True)
+            try:
+                url = self._build_url()
+                logger.debug(f"Creating new SQLAlchemy engine for database")
+                self._engine = create_engine(url, echo=self.echo, pool_pre_ping=True)
+                logger.info(f"SQLAlchemy engine created successfully")
+            except Exception as e:
+                logger.error(f"Failed to create database engine: {e}", exc_info=True)
+                raise
         return self._engine
 
     @contextmanager
@@ -114,8 +130,14 @@ class ConnectionManager:
 
         Caller is responsible for closing it with `.close()`.
         """
-        eng = self.get_engine()
-        return eng.raw_connection()
+        try:
+            eng = self.get_engine()
+            conn = eng.raw_connection()
+            logger.debug(f"Obtained raw DB-API connection")
+            return conn
+        except Exception as e:
+            logger.error(f"Failed to get raw DB-API connection: {e}", exc_info=True)
+            raise
 
     def dispose(self) -> None:
         if self._engine is not None:
@@ -167,10 +189,13 @@ def test_connection(timeout: Optional[float] = None) -> bool:
     """
     try:
         from sqlalchemy import text
+        logger.debug("Testing database connection...")
         with connection() as conn:
             conn.execute(text("SELECT 1"))
+        logger.info("Database connection test successful")
         return True
-    except Exception:
+    except Exception as e:
+        logger.error(f"Database connection test failed: {e}", exc_info=True)
         return False
 
 

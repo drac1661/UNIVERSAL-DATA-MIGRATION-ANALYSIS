@@ -46,7 +46,7 @@ By day 30, you should be able to:
 ### Day 8-9
 - Install SQLAlchemy
 - Learn Metadata + Table reflection
-
+----------------------------------------------DONE----------------------------------
 ### Day 10-11
 - Extract tables, columns, data types
 

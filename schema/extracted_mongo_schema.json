@@ -1,0 +1,16 @@
+{
+  "dbname": "udm_dev",
+  "db_type": "mongodb",
+  "version": "8.2.6",
+  "host": "127.0.0.1",
+  "port": 27017,
+  "collections": [],
+  "size_in_bytes": 0.0,
+  "collection_count": 0,
+  "users": [],
+  "roles": [],
+  "authentication_enabled": null,
+  "metadata": null,
+  "created_at": null,
+  "last_scanned": null
+}

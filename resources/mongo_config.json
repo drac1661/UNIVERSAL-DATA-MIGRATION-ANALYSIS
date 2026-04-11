@@ -1,0 +1,11 @@
+{
+  "db_type": "mongodb",
+  "host": "127.0.0.1",
+  "port": 27017,
+  "dbname": "udm_dev",
+  "user": "drac1661",
+  "password": "Drac1661@",
+  "auth_source": "admin",
+  "ssl": false,
+  "replica_set": null
+}
