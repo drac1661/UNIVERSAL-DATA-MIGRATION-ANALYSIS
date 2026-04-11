@@ -1,11 +1,11 @@
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Dict, Any, Union, Tuple
 from pydantic import BaseModel, field_validator
 
 
 class MongoDBIndex(BaseModel):
     """Represents an index in a MongoDB collection."""
     name: str
-    fields: List[tuple]  # List of (field_name, order) tuples, e.g., [("email", 1), ("created_at", -1)]
+    fields: List[Tuple[str, int]]  # List of (field_name, order) tuples, e.g., [("email", 1), ("created_at", -1)]
     unique: bool = False
     sparse: bool = False
     ttl: Optional[Union[int, float]] = None  # TTL in seconds for TTL indexes

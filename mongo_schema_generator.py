@@ -75,7 +75,10 @@ def extract_collection_schema(
         if stats:
             collection_model.size_in_bytes = stats.get("size", 0)
             collection_model.storage_size_in_bytes = stats.get("storageSize", 0)
-            collection_model.stats = stats
+            # Serialize BSON types (e.g. Int64, Decimal128) to native Python types
+            # before storing in the Pydantic model to avoid serialization warnings.
+            from extractor.mongo_data_extractor import MongoDBDataExtractor
+            collection_model.stats = MongoDBDataExtractor._serialize_bson(stats)
     except Exception as e:
         logger.debug(f"Could not retrieve collection stats: {e}")
     

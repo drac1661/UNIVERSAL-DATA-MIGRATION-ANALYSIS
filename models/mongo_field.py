@@ -35,6 +35,3 @@ class MongoDBField(BaseModel):
 
 
 MongoDBField.model_rebuild()
-
-
-MongoDBField.model_rebuild()
